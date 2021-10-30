@@ -1,0 +1,36 @@
+<p>This datepicker uses a custom template to display days.</p>
+
+<button [disabled]="range" (click)="onClickRange()">Range</button>
+<br />
+
+<ngb-datepicker
+  [showWeekNumbers]="true"
+  [dayTemplate]="range ? t : customDay"
+  (dateSelect)="selectOne($event)"
+></ngb-datepicker>
+
+<ng-template #customDay let-date let-focused="focused">
+  <span
+    class="custom-day"
+    [class.focused]="focused"
+    [class.bg-primary]="isSelected(date)"
+    >{{ date.day }}</span
+  >
+</ng-template>
+
+<ng-template #t let-date let-focused="focused">
+  <span
+    class="custom-day"
+    [class.focused]="focused"
+    [class.range]="isRange(date)"
+    [class.faded]="isHovered(date) || isInside(date)"
+    (mouseenter)="hoveredDate = date"
+    (mouseleave)="hoveredDate = null"
+  >
+    {{ date.day }}
+  </span>
+</ng-template>
+<div *ngIf="modelList.length>0">
+  <h1>Selected dates:</h1>
+  <pre>{{modelList| json}} </pre>
+</div>
