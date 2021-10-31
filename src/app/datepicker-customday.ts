@@ -31,8 +31,9 @@ import {
       background-color: rgb(2, 117, 216);
       color: white;
     }
-    .bg-primary {
-      border-radius: 1rem;
+    .custom-day.first, .custom-day.last {
+      background-color: rgb(2, 117, 216);
+      color: white;
     }
   `,
   ],
@@ -51,19 +52,10 @@ export class NgbdDatepickerCustomday {
     this.toDate = null;
   }
 
-  isSelected = (date: NgbDate) => {
-    for (const d of this.modelList) {
-      if (
-        d.year === date.year &&
-        d.month === date.month &&
-        d.day === date.day
-      ) {
-        return true;
-      }
-    }
+  isSelected(date: NgbDate): boolean {
+    return this.exists(date);
+  }
 
-    return false;
-  };
   selectOne(date) {
     if (this.range) {
       if (!this.fromDate && !this.toDate) {
@@ -72,8 +64,12 @@ export class NgbdDatepickerCustomday {
       } else if (this.fromDate && !this.toDate && date.after(this.fromDate)) {
         // Cuando las dos fechas se seleccionan y no es anterior a la fecha de inicio
         this.toDate = date;
+      } else if (this.fromDate.equals(date)) {
+        this.fromDate = null;
+        this.range = false;
+        this.toDate = null;
       } else {
-        // Cuando se clica fuera
+        // Cuando se clica fuera del rango
         this.toDate = null;
         this.fromDate = date;
       }
@@ -100,10 +96,6 @@ export class NgbdDatepickerCustomday {
         this.modelList.push(date);
       }
     }
-  }
-
-  getIndex(date: NgbDateStruct): number {
-    return 0;
   }
 
   isHovered(date: NgbDate) {
@@ -159,5 +151,11 @@ export class NgbdDatepickerCustomday {
     this.range = true;
     this.fromDate = null;
     this.toDate = null;
+  }
+
+  exists(date: NgbDate): boolean {
+    return (
+      this.modelList.findIndex((_date: NgbDate) => _date.equals(date)) >= 0
+    );
   }
 }

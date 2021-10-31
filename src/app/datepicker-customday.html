@@ -13,7 +13,8 @@
   <span
     class="custom-day"
     [class.focused]="focused"
-    [class.bg-primary]="isSelected(date)"
+    [class.range]="isSelected(date)"
+    [class.faded]="isSelected(date)"
     >{{ date.day }}</span
   >
 </ng-template>
