@@ -1,9 +1,5 @@
 import { Component } from '@angular/core';
-import {
-  NgbCalendar,
-  NgbDate,
-  NgbDateStruct,
-} from '@ng-bootstrap/ng-bootstrap';
+import { NgbCalendar, NgbDate } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'ngbd-datepicker-customday',
@@ -74,27 +70,32 @@ export class NgbdDatepickerCustomday {
         this.fromDate = date;
       }
 
-      if (this.fromDate && this.toDate) {
-        const diff = this.calculateDiff(this.fromDate, this.toDate);
-        let _from = Object.assign({}, this.fromDate);
-        this.modelList.push(this.fromDate);
-        for (let i = 0; i < diff; i++) {
-          _from = this.calendar.getNext(_from);
-          const xDate = new NgbDate(_from.year, _from.month, _from.day);
-          if (this.modelList.findIndex((_date) => _date.equals(xDate)) === -1)
-            this.modelList.push(xDate);
-        }
-
-        this.range = false;
-      }
+      this.mapRangeToList();
     } else {
-      if (this.modelList.findIndex((_date) => _date.equals(date)) >= 0) {
+      if (this.exists(date)) {
         this.modelList = this.modelList.filter(function (ele) {
           return !ele.equals(date);
         });
       } else {
         this.modelList.push(date);
       }
+    }
+  }
+
+  private mapRangeToList() {
+    if (this.fromDate && this.toDate) {
+      const diff = this.calculateDiff(this.fromDate, this.toDate);
+      let _from = Object.assign({}, this.fromDate);
+      this.modelList.push(this.fromDate);
+      for (let i = 0; i < diff; i++) {
+        _from = this.calendar.getNext(_from);
+        const xDate = new NgbDate(_from.year, _from.month, _from.day);
+        if (!this.exists(xDate)) {
+          this.modelList.push(xDate);
+        }
+      }
+
+      this.range = false;
     }
   }
 
@@ -111,7 +112,7 @@ export class NgbdDatepickerCustomday {
   isInside(date: NgbDate) {
     return (
       (this.toDate && date.after(this.fromDate) && date.before(this.toDate)) ||
-      this.modelList.findIndex((_date) => _date.equals(date)) >= 0
+      this.exists(date)
     );
   }
 
